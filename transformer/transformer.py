@@ -15,18 +15,17 @@ class Transformer():
         varExp = ['var', name, ['lambda', params, body]]
         return varExp
 
-    def transform_switch_to_if(self, defExp: list) -> list:
+    def transform_switch_to_if(self, def_exp: list) -> list:
         """
             Transform `switch` to nested `-if` expressions
         """
-        _tag, *cases, = defExp
+        _tag, *cases, = def_exp
         if_exp = ['if',
                   None,  # condition
                   None,  # block
                   None  # else
                   ]
         cur = if_exp
-        print(cur, cur[1])
         for i in range(0, len(cases) - 1):
             current_cond, current_block = cases[i]
             cur[1] = current_cond
@@ -41,13 +40,13 @@ class Transformer():
 
         return if_exp
 
-    def transform_for_to_while(self, defExp: list) -> list:
+    def transform_for_to_while(self, def_exp: list) -> list:
         """
-
+            Transforms `for` to `while`
         :param list:
         :return:
         """
-        _tag, _init, condition, modifier, exp = defExp
+        _tag, _init, condition, modifier, exp = def_exp
         _while_exp = ['begin',
                       _init,
                       ['while', condition,
@@ -57,3 +56,39 @@ class Transformer():
                        ]
                       ]
         return _while_exp
+
+    def transform_inc_to_set(self, def_exp: list) -> list:
+        """
+            Transforms `++i` to `i = i + 1`
+        :param def_exp:
+        :return:
+        """
+        _tag, exp = def_exp
+        return ['set', exp, ['+', exp, 1]]
+
+    def transform_sub_to_set(self, def_exp: list) -> list:
+        """
+            Transforms `++i` to `i = i + 1`
+        :param def_exp:
+        :return:
+        """
+        _tag, exp = def_exp
+        return ['set', exp, ['-', exp, 1]]
+
+    def transform_inc_val_to_set(self, def_exp: list) -> list:
+        """
+            Transforms `+= foo val` to (set foo (+ foo val))
+        :param def_exp:
+        :return:
+        """
+        _tag, exp, val = def_exp
+        return ['set', exp, ['+', exp, val]]
+
+    def transform_sub_val_to_set(self, def_exp: list) -> list:
+        """
+            Transforms `-= foo val` to (set foo (+ foo val))
+        :param def_exp:
+        :return:
+        """
+        _tag, exp, val = def_exp
+        return ['set', exp, ['-', exp, val]]

@@ -164,6 +164,41 @@ class Eva():
             varExp = self.transformer.transform_for_to_while(exp)
             return self.eval(varExp, env)
 
+        # --------------------------------------------
+        # Increment: (++ foo)
+        #
+        # Syntactic sugar
+        # for: (set foo (+ foo 1))
+        if exp[0] == '++':
+            varExp = self.transformer.transform_inc_to_set(exp)
+            return self.eval(varExp, env)
+        # --------------------------------------------
+        # Increment: (-- foo)
+        #
+        # Syntactic sugar
+        # for: (set foo (+ foo 1))
+        if exp[0] == '--':
+            varExp = self.transformer.transform_sub_to_set(exp)
+            return self.eval(varExp, env)
+
+        # --------------------------------------------
+        # Increment: (++ foo val)
+        #
+        # Syntactic sugar
+        # for: (set foo (+ foo val))
+        if exp[0] == '+=':
+            varExp = self.transformer.transform_inc_val_to_set(exp)
+            return self.eval(varExp, env)
+
+        # --------------------------------------------
+        # Increment: (-= foo val)
+        #
+        # Syntactic sugar
+        # for: (set foo (- foo val))
+        if exp[0] == '-=':
+            varExp = self.transformer.transform_sub_val_to_set(exp)
+            return self.eval(varExp, env)
+
         # ------------------------------------------------------------
         # lambda declarations: lambda (data) (* data 10))
         if exp[0] == 'lambda':
