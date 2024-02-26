@@ -73,6 +73,12 @@ class Eva():
         self.global_env = global_env
         self.transformer = transformer
 
+    def eval_global(self, expressions):
+        return self.__eval_block(
+            ['block',  # the name 'block' here is trivial, no used.
+             expressions], self.global_env
+        )
+
     def eval(self, exp, env=None):
         """
         Evaluation an expression in the given environment
@@ -237,6 +243,12 @@ class Eva():
 
             # class is accessible by name
             return env.define(name, class_env)
+
+        # ------------------------------------------------------------
+        # super definition: (super <ClassName>)
+        if exp[0] == 'super':
+            _tag, class_name = exp
+            return self.eval(class_name, env).parent
 
         # ------------------------------------------------------------
         # class instantiation: (new <class> <arguments>)

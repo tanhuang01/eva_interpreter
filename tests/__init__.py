@@ -4,8 +4,12 @@ from sexpdata import dumps, loads, Symbol
 eva = Eva()
 
 
-def eva_to_lst(lst):
-    return remove_symbol(loads(lst))
+def eva_to_lst(raw):
+    return remove_symbol(loads(raw))
+
+
+def to_block(raw):
+    return f"(begin {raw})"
 
 
 def remove_symbol(str_raw):
