@@ -1,5 +1,6 @@
 import unittest
-from tests import eva, eva_to_lst
+from tests import eva
+from parser.EvaParser import eva_to_lst
 
 class TestSwitch(unittest.TestCase):
 

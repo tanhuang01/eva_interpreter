@@ -1,6 +1,8 @@
+import pathlib
+
 from environment import Environment
 from transformer.transformer import Transformer
-
+from parser.EvaParser import eva_to_lst
 
 def _add(op1, op2):
     return op1 + op2
@@ -271,6 +273,31 @@ class Eva():
             _tags, instance, name = exp
             instance_env = self.eval(instance, env)
             return instance_env.lookup(name)
+
+        # ------------------------------------------------------------
+        # module declaration: (module <name> <body>)
+        if exp[0] == 'module':
+            _tag, module_name, module_body = exp
+
+            module_env = Environment({}, env)
+
+            self.__eval_class_block(module_body, module_env)
+
+            return env.define(module_name, module_env)
+
+        # ------------------------------------------------------------
+        # Module import: (import <module_name>)
+        if exp[0] == 'import':
+            _tag, module_name = exp
+
+            # todo: change to pkg_resources
+            f = open(f"/Users/congguangzi/PycharmProjects/eval/modules/{module_name}.eva",
+                     'r', buffering=1024)
+            module_src = f.read()
+            f.close()
+            module_body = eva_to_lst(f"(begin {module_src})")
+            module_exp = ['module', module_name, module_body]
+            return self.eval(module_exp, self.global_env)
 
         # ------------------------------------------------------------
         # Function calls:

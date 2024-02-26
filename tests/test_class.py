@@ -1,5 +1,6 @@
 import unittest
-from tests import eva, eva_to_lst, to_block
+from tests import eva
+from parser.EvaParser import eva_to_lst, to_block
 
 
 class TestClass(unittest.TestCase):
