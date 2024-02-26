@@ -139,15 +139,27 @@ class Eva():
             return result
 
         # ------------------------------------------------------------
-        # Function declarations
+        # Function declarations: (def square (x) (* x x))
+        #
+        # Syntactic suger for: (var square (lambda (x) (* x x)))
         if exp[0] == 'def':
             _tag, name, params, body = exp
+
+            # JIT(just in time) to transfer into a variable declaration:
+            varExp = ['var', name, ['lambda', params, body]]
+            return self.eval(varExp, env)
+
+        # ------------------------------------------------------------
+        # lambda declarations: lambda (data) (* data 10))
+        if exp[0] == 'lambda':
+            _tag, params, body = exp
             fn = Function(
                 params,
                 body,
-                env,  # Closure
+                env,    # Closure
             )
-            return env.define(name, fn)
+            return fn
+
 
         # ------------------------------------------------------------
         # Function calls:
