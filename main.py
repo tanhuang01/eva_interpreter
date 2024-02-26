@@ -27,5 +27,12 @@ if __name__ == '__main__':
     print(a1)
     print(a2)
 
+    part1 = 'a'
+    part2 = ['b','c','d']
+    lst = [part1, *part2]
+    print(lst)
+
+
+
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

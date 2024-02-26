@@ -16,6 +16,7 @@ class Environment():
 
     def define(self, name: str, val):
         self.record[name] = val
+        return val
 
     def assign(self, name: str, val):
         self.__resolve(name)[name] = val
@@ -28,7 +29,7 @@ class Environment():
             return self.record
 
         if self.parent is None:
-            raise Exception(f'the variable {name} is not found')
+            raise ValueError(f'the variable {name} is not found')
 
         return self.parent.__resolve(name)
 

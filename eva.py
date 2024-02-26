@@ -115,9 +115,18 @@ class Eva():
 
         # ------------------------------------------------------------
         # Variable assignment: (set foo 10)
+        # class-field assignment: (set (prop this x) x)
         if exp[0] == 'set':
-            name, value, = exp[1], exp[2]
-            return env.assign(name, self.eval(value, env))
+            ref, value, = exp[1], exp[2]
+            if ref[0] == 'prop':
+                _tag, instance, prop_name = ref
+                instance_evn = self.eval(instance, env)
+                return instance_evn.define(
+                    prop_name,
+                    self.eval(value, env))
+
+            # simple assignment
+            return env.assign(ref, self.eval(value, env))
 
         # ------------------------------------------------------------
         # Variable access
@@ -211,6 +220,47 @@ class Eva():
             return fn
 
         # ------------------------------------------------------------
+        # class declaration: (class <Name> <Parent> <body>)
+        if exp[0] == 'class':
+            _tag, name, parent, body = exp
+
+            # A class is an environment! -- a stored methods and shared properties
+            try:
+                parent_env = self.eval(parent, env)
+            except ValueError as e:  # parent is not defined yet
+                parent_env = env
+
+            class_env = Environment({}, parent_env)
+
+            # body is evaluate as an environment
+            self.__eval_class_block(body, class_env)
+
+            # class is accessible by name
+            return env.define(name, class_env)
+
+        # ------------------------------------------------------------
+        # class instantiation: (new <class> <arguments>)
+        if exp[0] == 'new':
+            class_env = self.eval(exp[1], env)
+
+            # an instance is also an environment
+            # The `parent` component of the instance environment is set to its class
+            instance_env = Environment({}, class_env)
+
+            args = [self.eval(arg, env) for arg in exp[2:]]
+            self.__call_user_defined_function(
+                class_env.lookup('constructor'),
+                [instance_env, *args])
+            return instance_env
+
+        # ------------------------------------------------------------
+        # property access: (prop <instance> <name>)
+        if exp[0] == 'prop':
+            _tags, instance, name = exp
+            instance_env = self.eval(instance, env)
+            return instance_env.lookup(name)
+
+        # ------------------------------------------------------------
         # Function calls:
         # (print 'hello' 'world')
         # (+ x 5)
@@ -227,17 +277,20 @@ class Eva():
                 return fn(*args)
 
             # 2. User-defined functions
-            activation_record = {}
-            for (index, param) in enumerate(fn.params):  # add all params to the active-environment
-                activation_record[param] = args[index]
-            activation_evn = Environment(
-                activation_record,
-                # env # ! dynamic closure, which parent-evn refers to where it's called.
-                fn.env  # static closure, which parent-evn refers to where it's defined
-            )
-            return self.__eval_body(fn.body, activation_evn)
+            return self.__call_user_defined_function(fn, args)
 
         raise RuntimeError(f"Un-implement: {exp}")
+
+    def __call_user_defined_function(self, fn, args: list):
+        activation_record = {}
+        for (index, param) in enumerate(fn.params):  # add all params to the active-environment
+            activation_record[param] = args[index]
+        activation_evn = Environment(
+            activation_record,
+            # env # ! dynamic closure, which parent-evn refers to where it's called.
+            fn.env  # static closure, which parent-evn refers to where it's defined
+        )
+        return self.__eval_body(fn.body, activation_evn)
 
     def __eval_body(self, body, env):
         if body[0] == 'begin':
@@ -250,6 +303,23 @@ class Eva():
         result = None
         for expression in block:
             result = self.eval(expression, block_env)
+        return result
+
+    def __eval_class_block(self, val, class_env):
+        """
+            the class with `begin`.
+            but we do not need to create another Environment, or the Environment of the block
+        will hold the relevant refers to the class, rather than class Environment.
+
+
+        :param val:
+        :param class_env:
+        :return:
+        """
+        block = val[1:]
+        result = None
+        for expression in block:
+            result = self.eval(expression, class_env)
         return result
 
     @staticmethod
