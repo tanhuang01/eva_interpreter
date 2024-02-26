@@ -29,6 +29,7 @@ class TestMath(unittest.TestCase):
         self.assertTrue(self.eva.eval(eva_to_lst('(< 1 5)')))
         self.assertTrue(self.eva.eval(eva_to_lst('(<= 5 5)')))
         self.assertTrue(self.eva.eval(eva_to_lst('(>= 5 5)')))
+        self.assertTrue(self.eva.eval(eva_to_lst('(== 5 5)')))
 
 
 if __name__ == '__main__':

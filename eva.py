@@ -1,5 +1,3 @@
-import keyword
-
 from environment import Environment
 
 
@@ -39,10 +37,13 @@ global_environment = Environment({
     '>=': lambda op1, op2: op1 >= op2,
     '<': lambda op1, op2: op1 < op2,
     '<=': lambda op1, op2: op1 <= op2,
+    '==': lambda op1, op2: op1 == op2,
 
     # built-in print
     'print': print,
 })
+
+global_built_in_variable_names = ['+', '-', '*', '/', '>', '>=', '<', '<=', '==']
 
 
 class Function():
@@ -156,10 +157,9 @@ class Eva():
             fn = Function(
                 params,
                 body,
-                env,    # Closure
+                env,  # Closure
             )
             return fn
-
 
         # ------------------------------------------------------------
         # Function calls:
@@ -219,4 +219,4 @@ class Eva():
     @staticmethod
     def _isVariableName(val):
         return isinstance(val, str) and \
-            (val.isidentifier() or (val in ['+', '-', '*', '/', '>', '>=', '<', '<=']))
+            (val.isidentifier() or (val in global_built_in_variable_names))

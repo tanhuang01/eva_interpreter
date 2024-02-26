@@ -1,5 +1,5 @@
 import unittest
-from tests import eva
+from tests import eva, eva_to_lst
 
 
 class TestFunctions(unittest.TestCase):
@@ -44,3 +44,22 @@ class TestFunctions(unittest.TestCase):
                                         ['var', 'fn', ['calc', 10, 20]],
                                         ['fn', 30],
                                         ]), 160)
+
+    def test_recursive_function(self):
+        """
+
+        :return:
+        """
+        lst = eva_to_lst(''
+                         '(begin'
+                         '  (def factorial (x) '
+                         '      (if (== x 1) '
+                         '          1'
+                         '          (* x (factorial (- x 1))))'
+                         '  )'
+                         ''
+                         '  (factorial 5)'
+                         ')'
+                         '')
+        # print(lst)
+        self.assertEquals(self.eva.eval(lst), 120)
