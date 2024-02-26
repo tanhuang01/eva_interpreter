@@ -1,4 +1,5 @@
 from environment import Environment
+from transformer.transformer import Transformer
 
 
 def _add(op1, op2):
@@ -18,6 +19,8 @@ def _mul(op1, op2):
 def _div(op1, op2):
     return op1 / op2
 
+
+global_transformer = Transformer()
 
 global_environment = Environment({
     None: None,
@@ -62,12 +65,13 @@ class Eva():
     Eva interpreter
     """
 
-    def __init__(self, global_env=global_environment):
+    def __init__(self, global_env=global_environment, transformer: Transformer = global_transformer):
         """
         Creat Eva instance with global environment
         :param global_env:
         """
         self.global_env = global_env
+        self.transformer = transformer
 
     def eval(self, exp, env=None):
         """
@@ -144,10 +148,20 @@ class Eva():
         #
         # Syntactic suger for: (var square (lambda (x) (* x x)))
         if exp[0] == 'def':
-            _tag, name, params, body = exp
+            varExp = self.transformer.transform_def_to_var_lambda(exp)
+            return self.eval(varExp, env)
 
-            # JIT(just in time) to transfer into a variable declaration:
-            varExp = ['var', name, ['lambda', params, body]]
+        # ------------------------------------------------------------
+        # switch-expression: (switch (cond1, block1) ...)
+        if exp[0] == 'switch':
+            varExp = self.transformer.transform_switch_to_if(exp)
+            return self.eval(varExp, env)
+
+        # ------------------------------------------------------------
+        # for-loop: (for init condition modifier body)
+        # Syntactic suger for: (begin init (while condition (begin body modifier)))
+        if exp[0] == 'for':
+            varExp = self.transformer.transform_for_to_while(exp)
             return self.eval(varExp, env)
 
         # ------------------------------------------------------------

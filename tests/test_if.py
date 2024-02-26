@@ -34,5 +34,5 @@ class TestIf(unittest.TestCase):
                 y
             )
         ''')
-        print(lst)
+        # print(lst)
         self.assertEqual(self.eva.eval(lst), 30)

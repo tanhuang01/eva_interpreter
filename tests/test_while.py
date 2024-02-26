@@ -13,7 +13,6 @@ class TestWhile(unittest.TestCase):
 
                                         ['while', ['<', 'counter', 10],
                                          # result++
-                                         # TODO: implement ['++', <expr>]
                                          ['begin',
                                           ['set', 'result', ['+', 'result', 1]],
                                           ['set', 'counter', ['+', 'counter', 1]],

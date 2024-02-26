@@ -62,4 +62,4 @@ class TestFunctions(unittest.TestCase):
                          ')'
                          '')
         # print(lst)
-        self.assertEquals(self.eva.eval(lst), 120)
+        self.assertEqual(self.eva.eval(lst), 120)

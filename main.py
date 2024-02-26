@@ -20,16 +20,12 @@ if __name__ == '__main__':
     print(s01)
     print(remove_symbol(s01))
 
-    s02 = loads('(begin ('
-                '(+ 1 2) '
-                '(* 3 8)'
-                '))')
-    print(s02)
-
-    print((s02))
-
-    f1 = lambda op1, op2: op1 > op2
-    print(callable(f1))
+    # todo depack
+    lst = ['a','b','c', None]
+    lst[3] = 'd'
+    a1, *a2 = lst
+    print(a1)
+    print(a2)
 
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
