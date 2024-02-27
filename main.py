@@ -4,7 +4,6 @@
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 
 import argparse
-import os.path
 
 from eva import Eva
 from parser.EvaParser import to_block, eva_to_lst
