@@ -19,7 +19,7 @@ class TestClass(unittest.TestCase):
                                   '            )'
                                   '         )'
                                   ''
-                                  '        (def calc(this) '
+                                  '        (def calc(this)' 
                                   '         (+ (prop this x) (prop this y))'
                                   '        )'
                                   '    )'

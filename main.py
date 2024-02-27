@@ -3,36 +3,32 @@
 # Press ⌃R to execute it or replace it with your code.
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 
-from sexpdata import loads, dumps, Symbol
-from tests import eva_to_lst, remove_symbol
+import argparse
+import os.path
+
+from eva import Eva
+from parser.EvaParser import to_block, eva_to_lst
+
+eva = Eva()
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+def exal_global(expression):
+    exp = to_block(expression)
+    return eva.eval_global(eva_to_lst(exp))
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    parser = argparse.ArgumentParser(description="Example script.")
+    parser.add_argument('-e', type=str, help='execute the command line')
+    parser.add_argument('-f', type=str, nargs='?', help="path to the .eva file to be executed")
+    args = parser.parse_args()
 
-    s01 = loads('(+ 1 (* 2 (- 5 3)))')
-    print(s01)
-    print(remove_symbol(s01))
-
-    # todo depack
-    lst = ['a','b','c', None]
-    lst[3] = 'd'
-    a1, *a2 = lst
-    print(a1)
-    print(a2)
-
-    part1 = 'a'
-    part2 = ['b','c','d']
-    lst = [part1, *part2]
-    print(lst)
-
-
-
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    if args.e:
+        result = exal_global(args.e)
+        print(result)
+    elif args.f:
+        file = open(args.f, 'r', buffering=1024)
+        src = file.read()
+        result = exal_global(src)
+        print(result)

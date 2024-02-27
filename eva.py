@@ -1,3 +1,4 @@
+import os.path
 import pathlib
 
 from environment import Environment
@@ -290,9 +291,7 @@ class Eva():
         if exp[0] == 'import':
             _tag, module_name = exp
 
-            # todo: change to pkg_resources
-            f = open(f"/Users/congguangzi/PycharmProjects/eval/modules/{module_name}.eva",
-                     'r', buffering=1024)
+            f = open(f'./modules/{module_name}.eva', 'r', buffering=1024)
             module_src = f.read()
             f.close()
             module_body = eva_to_lst(f"(begin {module_src})")
